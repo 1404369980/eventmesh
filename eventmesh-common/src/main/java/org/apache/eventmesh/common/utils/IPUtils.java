@@ -47,7 +47,15 @@ import inet.ipaddr.IPAddressString;
 @Slf4j
 public class IPUtils {
 
-    public static String getLocalAddress() {
+    private static String address;
+    public static String getLocalAddress(){
+        if (address == null){
+            address = genLocalAddress();
+        }
+        return address;
+    }
+
+    private static String genLocalAddress() {
         // if the progress works under docker environment
         // return the host ip about this docker located from environment value
         String dockerHostIp = System.getenv("docker_host_ip");
