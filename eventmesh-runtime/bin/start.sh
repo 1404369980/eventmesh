@@ -26,7 +26,7 @@ export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
 
-TMP_JAVA_HOME="/nemo/jdk1.8.0_152"
+TMP_JAVA_HOME="/data/soft/eventmesh/jdk1.8_202/jdk1.8.0_202"
 
 #detect operating system.
 OS=$(uname)
@@ -161,9 +161,9 @@ echo "using jdk[$JAVA]" >> ${EVENTMESH_LOG_HOME}/eventmesh.out
 EVENTMESH_MAIN=org.apache.eventmesh.runtime.boot.EventMeshStartup
 if [ $DOCKER ]
 then
-	$JAVA $JAVA_OPT -classpath ${EVENTMESH_HOME}/conf:${EVENTMESH_HOME}/apps/*:${EVENTMESH_HOME}/lib/* $EVENTMESH_MAIN >> ${EVENTMESH_LOG_HOME}/eventmesh.out
+	$JAVA $JAVA_OPT -classpath ${EVENTMESH_HOME}/conf:${EVENTMESH_HOME}/apps/*:${EVENTMESH_HOME}/plugin/storage/rocketmq/*:${EVENTMESH_HOME}/lib/* $EVENTMESH_MAIN >> ${EVENTMESH_LOG_HOME}/eventmesh.out
 else
-	$JAVA $JAVA_OPT -classpath ${EVENTMESH_HOME}/conf:${EVENTMESH_HOME}/apps/*:${EVENTMESH_HOME}/lib/* $EVENTMESH_MAIN >> ${EVENTMESH_LOG_HOME}/eventmesh.out 2>&1 &
+	$JAVA $JAVA_OPT -classpath ${EVENTMESH_HOME}/conf:${EVENTMESH_HOME}/apps/*:${EVENTMESH_HOME}/plugin/storage/rocketmq/*:${EVENTMESH_HOME}/lib/* $EVENTMESH_MAIN >> ${EVENTMESH_LOG_HOME}/eventmesh.out 2>&1 &
 echo $!>pid.file
 fi
 exit 0
