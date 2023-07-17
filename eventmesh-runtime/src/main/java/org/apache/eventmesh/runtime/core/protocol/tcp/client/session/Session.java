@@ -20,6 +20,7 @@ package org.apache.eventmesh.runtime.core.protocol.tcp.client.session;
 import static org.apache.eventmesh.common.protocol.tcp.Command.LISTEN_RESPONSE;
 
 import org.apache.eventmesh.api.SendCallback;
+import org.apache.eventmesh.api.producer.Producer;
 import org.apache.eventmesh.common.protocol.SubscriptionItem;
 import org.apache.eventmesh.common.protocol.tcp.Header;
 import org.apache.eventmesh.common.protocol.tcp.OPStatus;
@@ -131,8 +132,10 @@ public class Session {
             sessionContext.getSubscribeTopics().putIfAbsent(item.getTopic(), item);
             Objects.requireNonNull(clientGroupWrapper.get()).subscribe(item);
 
-            Objects.requireNonNull(clientGroupWrapper.get()).getMqProducerWrapper().getMeshMQProducer()
-                .checkTopicExist(item.getTopic());
+            Producer meshMQProducer = Objects.requireNonNull(clientGroupWrapper.get()).getMqProducerWrapper().getMeshMQProducer();
+            if ( ! meshMQProducer.isStarted()){
+                throw new RuntimeException("mq 未正常运行");
+            }
 
             Objects.requireNonNull(clientGroupWrapper.get()).addSubscription(item, this);
             SUBSCRIB_LOGGER.info("subscribe|succeed|topic={}|user={}", item.getTopic(), client);
