@@ -20,7 +20,9 @@ package org.apache.eventmesh.client.tcp.impl;
 import org.apache.eventmesh.client.tcp.common.MessageUtils;
 import org.apache.eventmesh.client.tcp.common.RequestContext;
 import org.apache.eventmesh.common.protocol.tcp.Command;
+import org.apache.eventmesh.common.protocol.tcp.OPStatus;
 import org.apache.eventmesh.common.protocol.tcp.Package;
+import org.apache.eventmesh.common.utils.JsonUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,7 +55,7 @@ public abstract class AbstractEventMeshTCPSubHandler<ProtocolMessage> extends Si
                 break;
             case ASYNC_MESSAGE_TO_CLIENT:
                 callback(getProtocolMessage(msg), ctx);
-                response(MessageUtils.asyncMessageAck(msg));
+                response(MessageUtils.asyncMessageNonBodyAck(msg));
                 break;
             case BROADCAST_MESSAGE_TO_CLIENT:
                 callback(getProtocolMessage(msg), ctx);
@@ -62,15 +64,20 @@ public abstract class AbstractEventMeshTCPSubHandler<ProtocolMessage> extends Si
             case SERVER_GOODBYE_REQUEST:
                 // TODO
                 break;
+            case HEARTBEAT_RESPONSE:
+                if (! OPStatus.SUCCESS.getCode().equals(msg.getHeader().getCode())) {
+                    log.error("msg heartbeat_response error|{}|{}", cmd, msg);
+                }
+                break;
             default:
-                log.error("msg ignored|{}|{}", cmd, msg);
+                log.warn("msg ignored|{}|{}", cmd, JsonUtils.toJSONString(msg));
         }
         RequestContext context = contexts.get(RequestContext.key(msg));
         if (context != null) {
             contexts.remove(context.getKey());
             context.finish(msg);
         } else {
-            log.error("msg ignored,context not found.|{}|{}", cmd, msg);
+            log.warn("msg ignored,context not found.|{}|{}", cmd, msg);
         }
     }
 

@@ -91,6 +91,13 @@ public class MessageUtils {
         return msg;
     }
 
+    public static Package asyncMessageNonBodyAck(Package in) {
+        final Package msg = new Package();
+        msg.setHeader(new Header(Command.ASYNC_MESSAGE_TO_CLIENT_ACK, 0, null, in.getHeader().getSeq()));
+        // msg.setBody(in.getBody());
+        return msg;
+    }
+
     public static Package buildPackage(Object message, Command command) {
         final Package msg = new Package();
         msg.setHeader(new Header(command, 0, null, generateRandomString()));

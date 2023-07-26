@@ -176,11 +176,13 @@ public abstract class TcpClient implements Closeable {
                 if (!future.isSuccess()) {
                     if (log.isWarnEnabled()) {
                         log.warn("send msg failed", future.cause());
+                    } else {
+                        log.error("send error", future.cause());
                     }
                 }
             });
         } else {
-            channel.writeAndFlush(msg).sync();
+            log.error("send error channel is not writable");
         }
     }
 
